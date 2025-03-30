@@ -1,4 +1,4 @@
-name: Clone
+name: Use Template
 
 on:
   create:
