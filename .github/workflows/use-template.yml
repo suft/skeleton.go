@@ -1,13 +1,15 @@
 name: Use Template
 
 on:
-  create:
+  push:
+    branches:
+      - main
 
 permissions:
   contents: write
 
 jobs:
-  clone:
+  use-template:
     if: github.event.repository.name != 'skeleton.go'
     runs-on: ubuntu-latest
     steps:
@@ -22,6 +24,9 @@ jobs:
             -not -path "./.git/*" \
             -exec sed -i -e 's/skeleton.go/${{ env.REPO_NAME }}/g' \
             -e 's/suft/${{ env.REPO_OWNER }}/g' {} +
+      - name: delete this workflow file
+        run: |
+          rm -f .github/workflows/use-template.yml
       - name: commit changes
         env:
           ACTOR: ${{ github.actor }}
@@ -30,5 +35,5 @@ jobs:
           git config --global user.email "${{ env.ACTOR }}@users.noreply.github.com"
           git config --global user.name "${{ env.ACTOR }}"
           git add .
-          git commit -m "feat: intialize new repo"
+          git commit -m "feat: initialize new repo"
           git push origin ${{ env.REF_NAME }}
